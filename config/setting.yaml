@@ -1,0 +1,101 @@
+llms:
+  groq:
+    llama-3.1-70b:
+      model_name: llama-3.1-70b-versatile
+      max_tokens: 4096
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+    llama-3-70b:
+      model_name: llama3-groq-70b-8192-tool-use-preview
+      max_tokens: 1024
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+  yi-01:
+    yi-large:
+      model_name: yi-large-fc
+      max_tokens: 1024
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+    yi-large-turbo:
+      model_name: yi-large-turbo
+      max_tokens: 1024
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+  nim:
+    yi-large:
+      model_name: 01-ai/yi-large
+      max_tokens: 1024
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+  deepseek:
+    deepseek-chat:
+      model_name: deepseek-chat
+      max_tokens: 1024
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+  google:
+    gemini-1.5-pro:
+      model_name: gemini-1.5-pro-001
+      max_tokens: 1024
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+      project_id: ai-recipe-dev
+    gemini-1.5-flash:
+      model_name: gemini-1.5-flash-001
+      max_tokens: 1024
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+      project_id: ai-recipe-dev
+chains:
+  intent: # heavy
+    # llm: yi-large
+    # llm: llama-3.1-70b
+    # llm: gemini-1.5-pro
+    llm: deepseek-chat
+    temperature: 0.01
+    top_p: 0.95
+  chitchat: # light
+    # llm: yi-large-turbo
+    # llm: llama-3.1-70b
+    llm: gemini-1.5-flash
+    temperature: 0.5
+    top_p: 0.95
+  cusine: # heavy
+    # llm: yi-large
+    # llm: llama-3.1-70b
+    # llm: gemini-1.5-pro
+    llm: deepseek-chat
+    temperature: 0.5
+    top_p: 0.95
+    no_of_cusine: 3
+  intro: # light
+    # llm: yi-large-turbo
+    # llm: llama-3.1-70b
+    llm: gemini-1.5-flash
+    temperature: 0.1
+    top_p: 0.95
+  need_for_recipe: # light
+    # llm: yi-large-turbo
+    # llm: llama-3.1-70b
+    llm: gemini-1.5-flash
+    temperature: 0.5
+    top_p: 0.95
+  pick_ingredients: # heavy
+    # llm: yi-large
+    # llm: llama-3.1-70b
+    # llm: gemini-1.5-pro
+    llm: deepseek-chat
+    temperature: 0.01
+    top_p: 0.95
+  need_for_cart: # light
+    # llm: yi-large-turbo
+    # llm: llama-3.1-70b
+    llm: gemini-1.5-flash
+    temperature: 0.5
+    top_p: 0.95
+  write_recipe: # light
+    # llm: yi-large
+    # llm: llama-3.1-70b
+    llm: gemini-1.5-flash
+    temperature: 0.1
+    top_p: 0.95
