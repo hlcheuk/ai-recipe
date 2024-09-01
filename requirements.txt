@@ -1,0 +1,12 @@
+bs4==0.0.2
+grpcio-status==1.66.1
+langchain-google-community==1.0.8
+langchain-google-vertexai==1.0.10
+langchain-groq==0.1.9
+langchain-nvidia-ai-endpoints==0.2.2
+langchain-openai==0.1.23
+langgraph==0.2.15
+pipdeptree==2.23.1
+python-dotenv==1.0.1
+setuptools==65.5.0
+starlette==0.38.3
