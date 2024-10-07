@@ -154,17 +154,17 @@ def search_recipe(state: CusineState):
     print("--- Search and Write Recipe | Pick Ingredients ---")
     cusine = state["cusine"]
     search_result = google_search_scrape.invoke(cusine + " 食譜")
-    no_result_recipe = "沒有找到食譜，請自由發揮"
+    NO_RECIPE_RESULT = "沒有找到食譜，請自由發揮"
     if search_result:
         recipe_from_search = (
-            no_result_recipe
+            NO_RECIPE_RESULT
             if "cookies" in search_result["body_text"]
             else search_result["body_text"]
         )
         recipe_link = search_result["link"]
     else:
         recipe_from_search, recipe_link = (
-            no_result_recipe,
+            NO_RECIPE_RESULT,
             "https://koc.hktvmall.com/landing",
         )
     recipe = write_recipe_chain.invoke({"cusine": cusine, "recipe": recipe_from_search})
@@ -320,5 +320,5 @@ def inference_lite():
 
 
 if __name__ == "__main__":
-    inference()
-    # inference_lite()
+    # inference()
+    inference_lite()

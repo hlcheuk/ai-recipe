@@ -3,10 +3,11 @@ from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeSt
 from src.model_init.llms import (
     llm_llama31,
     llm_deepseek_chat,
-    # llm_yi_large,
-    # llm_yi_large_turbo,
-    llm_gemini_15_pro,
-    llm_gemini_15_flash,
+    llm_yi_large,
+    llm_yi_large_turbo,
+    llm_yi_spark,
+    # llm_gemini_15_pro,
+    # llm_gemini_15_flash,
 )
 from src.utils.utils import read_yaml
 
@@ -33,18 +34,20 @@ def define_llm(config: dict):
     Returns:
         LLM: The defined Large Language Model.
     """
-    # if config["llm"] == "yi-large":
-    #     llm = llm_yi_large
-    # elif config["llm"] == "yi-large-turbo":
-    #     llm = llm_yi_large_turbo
-    if config["llm"] == "deepseek-chat":
+    if config["llm"] == "yi-large":
+        llm = llm_yi_large
+    elif config["llm"] == "yi-large-turbo":
+        llm = llm_yi_large_turbo
+    elif config["llm"] == "yi-spark":
+        llm = llm_yi_spark
+    elif config["llm"] == "deepseek-chat":
         llm = llm_deepseek_chat
     elif config["llm"] == "llama-3.1-70b":
         llm = llm_llama31
-    elif config["llm"] == "gemini-1.5-pro":
-        llm = llm_gemini_15_pro
-    elif config["llm"] == "gemini-1.5-flash":
-        llm = llm_gemini_15_flash
+    # elif config["llm"] == "gemini-1.5-pro":
+    #     llm = llm_gemini_15_pro
+    # elif config["llm"] == "gemini-1.5-flash":
+    #     llm = llm_gemini_15_flash
     llm = llm.with_config(
         configurable={
             "temperature": config["temperature"],
