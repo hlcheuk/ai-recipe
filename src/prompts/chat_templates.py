@@ -10,18 +10,12 @@ from src.prompts.prompts import (
     INTRO_PROMPT,
     NEED_FOR_RECIPE_INSTRUCTION,
     NEED_FOR_RECIPE_PROMPT,
-    PICK_INGREDIENTS_INSTRUCTION,
-    PICK_INGREDIENTS_PROMPT,
-    NEED_FOR_CART_INSTRUCTION,
-    NEED_FOR_CART_PROMPT,
+    NEED_FOR_OTHER_HELP_INSTRUCTION,
+    NEED_FOR_OTHER_HELP_PROMPT,
     WRITE_RECIPE_INSTRUCTION,
     WRITE_RECIPE_PROMPT,
 )
-from src.prompts.few_shots import (
-    intent_examples,
-    cusine_examples,
-    pick_ingredients_examples,
-)
+from src.prompts.few_shots import intent_examples, cusine_examples
 from src.utils.utils import read_yaml
 
 # Load config from setting.toml
@@ -68,18 +62,10 @@ need_for_recipe_template = ChatPromptTemplate.from_messages(
     ]
 )
 
-pick_ingredients_template = ChatPromptTemplate.from_messages(
+need_for_other_help_template = ChatPromptTemplate.from_messages(
     [
-        ("system", PICK_INGREDIENTS_INSTRUCTION),
-        *pick_ingredients_examples,
-        ("user", PICK_INGREDIENTS_PROMPT),
-    ]
-)
-
-need_for_cart_template = ChatPromptTemplate.from_messages(
-    [
-        ("system", NEED_FOR_CART_INSTRUCTION),
-        ("user", NEED_FOR_CART_PROMPT),
+        ("system", NEED_FOR_OTHER_HELP_INSTRUCTION),
+        ("user", NEED_FOR_OTHER_HELP_PROMPT),
     ]
 )
 

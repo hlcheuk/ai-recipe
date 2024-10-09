@@ -1,8 +1,8 @@
 from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
 
 from src.model_init.llms import (
-    llm_llama31,
-    llm_deepseek_chat,
+    # llm_llama31,
+    # llm_deepseek_chat,
     llm_yi_large,
     llm_yi_large_turbo,
     llm_yi_spark,
@@ -40,10 +40,10 @@ def define_llm(config: dict):
         llm = llm_yi_large_turbo
     elif config["llm"] == "yi-spark":
         llm = llm_yi_spark
-    elif config["llm"] == "deepseek-chat":
-        llm = llm_deepseek_chat
-    elif config["llm"] == "llama-3.1-70b":
-        llm = llm_llama31
+    # elif config["llm"] == "deepseek-chat":
+    #     llm = llm_deepseek_chat
+    # elif config["llm"] == "llama-3.1-70b":
+    #     llm = llm_llama31
     # elif config["llm"] == "gemini-1.5-pro":
     #     llm = llm_gemini_15_pro
     # elif config["llm"] == "gemini-1.5-flash":
