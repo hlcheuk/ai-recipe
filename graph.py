@@ -6,7 +6,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, StateGraph, END
 from langgraph.constants import Send
 
-from src.state.state import OverallState, CusineState, PickIngredientsState
+from src.state.state import OverallState, CusineState
 from src.tools.tools import google_search_scrape
 from src.chains.chains import (
     intent_chain,
@@ -14,16 +14,18 @@ from src.chains.chains import (
     cusine_chain,
     intro_chain,
     need_for_recipe_chain,
-    pick_ingredients_chain,
-    need_for_cart_chain,
+    need_for_other_help_chain,
     write_recipe_chain,
+    chains_config,
 )
 from src.helpers.helpers import visualise_runnable
-
 
 # memory = SqliteSaver.from_conn_string(":memory:")
 memory = MemorySaver()
 workflow = StateGraph(OverallState)
+
+# Get no of cusine from config
+no_of_cusine = chains_config["cusine"]["no_of_cusine"]
 
 
 # node functions
@@ -37,7 +39,6 @@ def intent(state: OverallState):
         "question": question,
         "about_cusine": result["about_cusine"],
         "extra_requirements": result["extra_requirements"],
-        # "messages": [AIMessage(content=result.response, name="intent")],
     }
 
 
@@ -78,7 +79,10 @@ def need_for_recipe(state: OverallState):
     print("--- Need for Recipe ---")
     cusine_choices = state["cusine_choices"]
     cusine_intro = "\n\n".join(
-        [data["cusine"] + "：" + data["intro"] for data in state["cusine_intro"]]
+        [
+            data["cusine"] + "：" + data["intro"]
+            for data in state["cusine_intro"][-no_of_cusine:]
+        ]
     )
     response = need_for_recipe_chain.invoke({"cusine_choices": cusine_choices})
     message = cusine_intro + "\n\n" + response.content
@@ -94,55 +98,30 @@ def deny_recipe_need(state: OverallState):
     pass
 
 
-def pick_ingredients(state: CusineState):
-    print("--- Pick Ingredients ---")
-    cusine = state["cusine"]
-    intro = state["intro"]
-    response = pick_ingredients_chain.invoke({"cusine": cusine, "intro": intro})
-    ingredients = eval(response.content)
-    return {
-        "cusine_intro_ingredients": [
-            {"cusine": cusine, "intro": intro, "ingredients": ingredients}
-        ]
-    }
-
-
-def need_for_cart(state: OverallState):
-    print("--- Need for Cart ---")
-    ingredients = "\n".join(
-        {
-            "\n".join(data["ingredients"])
-            for data in (
-                state["cusine_intro_ingredients"] + state["cusine_recipe_link"]
-            )
-        }
-    )
+def need_for_other_help(state: OverallState):
+    print("--- Need for Other Help ---")
+    # generate response for asking other help needed
+    response = need_for_other_help_chain.invoke({"input": ""})
     if len(state["cusine_recipe_link"]) == 0:
-        cusine_content = "\n\n".join(
-            {
-                data["cusine"] + "：\n   " + "\n   ".join(data["ingredients"])
-                for data in state["cusine_intro_ingredients"]
-            }
-        )
+        # no recipe website found
+        message = response.content
     else:
+        # generate response for displaying recipe website
         cusine_content = "\n\n".join(
             {
                 data["cusine"]
                 + "\n"
                 + "步驟：\n"
                 + data["recipe"]
-                + "\n\n所需食材："
-                + "、".join(data["ingredients"])
                 + "\n\n食譜連結："
                 + data["link"]
-                for data in state["cusine_recipe_link"]
+                for data in state["cusine_recipe_link"][-no_of_cusine:]
             }
         )
-    response = need_for_cart_chain.invoke({"ingredients": ingredients})
-    message = cusine_content + "\n\n" + response.content
+        message = cusine_content + "\n\n" + response.content
     return {
-        "messages": [AIMessage(content=message, name="need_for_cart")],
-        "last_node": "need_for_cart",
+        "messages": [AIMessage(content=message, name="need_for_other_help")],
+        "last_node": "need_for_other_help",
     }
 
 
@@ -151,7 +130,7 @@ def confirm_recipe_need(state: OverallState):
 
 
 def search_recipe(state: CusineState):
-    print("--- Search and Write Recipe | Pick Ingredients ---")
+    print("--- Search and Write Recipe ---")
     cusine = state["cusine"]
     search_result = google_search_scrape.invoke(cusine + " 食譜")
     NO_RECIPE_RESULT = "沒有找到食譜，請自由發揮"
@@ -165,18 +144,14 @@ def search_recipe(state: CusineState):
     else:
         recipe_from_search, recipe_link = (
             NO_RECIPE_RESULT,
-            "https://koc.hktvmall.com/landing",
+            "https://www.bbc.co.uk/food/recipes",
         )
     recipe = write_recipe_chain.invoke({"cusine": cusine, "recipe": recipe_from_search})
-    intro = state["intro"]
-    response = pick_ingredients_chain.invoke({"cusine": cusine, "intro": intro})
-    ingredients = eval(response.content)
     return {
         "cusine_recipe_link": [
             {
                 "cusine": cusine,
                 "recipe": recipe.content,
-                "ingredients": ingredients,
                 "link": recipe_link,
             }
         ]
@@ -188,6 +163,7 @@ def entry_point_router(state: OverallState):
     print("--- Entry Point Router ---")
     if "messages" in state:
         last_message = state["messages"][-1].content
+        # TODO last_message_meaning
     if "last_node" not in state:
         return "intent"
     elif state["last_node"] == "need_for_recipe":
@@ -213,14 +189,6 @@ def map_to_intro(state: OverallState):
     return [Send("intro", {"cusine": choice}) for choice in state["cusine_choices"]]
 
 
-def map_to_pick_ingredients(state: OverallState):
-    print("--- Map to Pick Ingredients ---")
-    return [
-        Send("pick_ingredients", {"cusine": data["cusine"], "intro": data["intro"]})
-        for data in state["cusine_intro"]
-    ]
-
-
 def map_to_search_recipe(state: OverallState):
     print("--- Map to Search Recipe ---")
     return [
@@ -236,8 +204,7 @@ workflow.add_node("cusine", cusine)
 workflow.add_node("intro", intro)
 workflow.add_node("need_for_recipe", need_for_recipe)
 workflow.add_node("deny_recipe_need", deny_recipe_need)
-workflow.add_node("pick_ingredients", pick_ingredients)
-workflow.add_node("need_for_cart", need_for_cart)
+workflow.add_node("need_for_other_help", need_for_other_help)
 workflow.add_node("confirm_recipe_need", confirm_recipe_need)
 workflow.add_node("search_recipe", search_recipe)
 
@@ -261,15 +228,12 @@ workflow.add_edge("chitchat", END)
 workflow.add_conditional_edges("cusine", map_to_intro, ["intro"])
 workflow.add_edge("intro", "need_for_recipe")
 workflow.add_edge("need_for_recipe", END)
-workflow.add_conditional_edges(
-    "deny_recipe_need", map_to_pick_ingredients, ["pick_ingredients"]
-)
+workflow.add_edge("deny_recipe_need", "need_for_other_help")
 workflow.add_conditional_edges(
     "confirm_recipe_need", map_to_search_recipe, ["search_recipe"]
 )
-workflow.add_edge("search_recipe", "need_for_cart")
-workflow.add_edge("pick_ingredients", "need_for_cart")
-workflow.add_edge("need_for_cart", END)
+workflow.add_edge("search_recipe", "need_for_other_help")
+workflow.add_edge("need_for_other_help", END)
 
 
 graph = workflow.compile(checkpointer=memory)
@@ -306,7 +270,12 @@ def inference():
 
 
 def inference_lite():
-
+    # nodes for responses
+    show_response_nodes = [
+        "chitchat",
+        "need_for_recipe",
+        "need_for_other_help",
+    ]
     while True:
         question = input("Enter your question: ")
         print("--------------------------------------")
@@ -314,7 +283,7 @@ def inference_lite():
         for output in graph.stream(inputs, config):
             # stream() yields dictionaries with output keyed by node name
             for key, value in output.items():
-                if key in ["chitchat", "need_for_recipe", "need_for_cart"]:
+                if key in show_response_nodes:
                     print("--------------------------------------")
                     print(value["messages"][-1].content)
 
