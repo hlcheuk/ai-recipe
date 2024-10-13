@@ -72,3 +72,8 @@ chains:
     llm: gpt-4o
     temperature: 0.1
     top_p: 0.95
+  detect_recipe_need: # light
+    llm: yi-large-turbo
+    # llm: gpt-4o-mini
+    temperature: 0.1
+    top_p: 0.95

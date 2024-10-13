@@ -6,6 +6,7 @@ from langchain_core.messages import BaseMessage
 class OverallState(TypedDict):
     question: str
     about_cusine: bool
+    recipe_need: str
     extra_requirements: List[str]
     cusine_choices: List[str]
     cusine_intro: Annotated[List[dict], operator.add]
