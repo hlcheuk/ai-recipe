@@ -1,8 +1,6 @@
 import uuid
 from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
-
-# from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import START, StateGraph, END
 from langgraph.constants import Send
 
@@ -16,6 +14,7 @@ from src.chains.chains import (
     need_for_recipe_chain,
     need_for_other_help_chain,
     write_recipe_chain,
+    detect_recipe_need_chain,
     chains_config,
 )
 from src.helpers.helpers import visualise_runnable
@@ -161,18 +160,26 @@ def search_recipe(state: CusineState):
 # conditional edges logic
 def entry_point_router(state: OverallState):
     print("--- Entry Point Router ---")
-    if "messages" in state:
-        last_message = state["messages"][-1].content
-        # TODO last_message_meaning
     if "last_node" not in state:
         return "intent"
     elif state["last_node"] == "need_for_recipe":
-        if last_message == "no":
-            return "deny_recipe_need"
-        elif last_message == "yes":
-            return "confirm_recipe_need"
+        return "detect_recipe_need"
     else:
         return "intent"
+
+
+def detect_recipe_need(state: OverallState):
+    print("--- Detect Recipe Need ---")
+    if "messages" in state:
+        last_message = state["messages"][-1].content
+        # last_conversation = state["messages"][-3:-1]
+    response = detect_recipe_need_chain.invoke(
+        {
+            "answer": last_message,
+            # "last_message": last_conversation,
+        }
+    )
+    return {"recipe_need": response.content}
 
 
 def intent_router(state: OverallState):
@@ -181,6 +188,17 @@ def intent_router(state: OverallState):
     if about_cusine:
         return "cusine"
     else:
+        return "chitchat"
+
+
+def recipe_need_router(state: OverallState):
+    print("--- Recipe Need Router ---")
+    recipe_need = state["recipe_need"]
+    if recipe_need == "no":
+        return "deny_recipe_need"
+    elif recipe_need == "yes":
+        return "confirm_recipe_need"
+    elif recipe_need == "others":
         return "chitchat"
 
 
@@ -203,9 +221,11 @@ workflow.add_node("chitchat", chitchat)
 workflow.add_node("cusine", cusine)
 workflow.add_node("intro", intro)
 workflow.add_node("need_for_recipe", need_for_recipe)
+workflow.add_node("detect_recipe_need", detect_recipe_need)
+workflow.add_node("confirm_recipe_need", confirm_recipe_need)
 workflow.add_node("deny_recipe_need", deny_recipe_need)
 workflow.add_node("need_for_other_help", need_for_other_help)
-workflow.add_node("confirm_recipe_need", confirm_recipe_need)
+
 workflow.add_node("search_recipe", search_recipe)
 
 
@@ -215,14 +235,22 @@ workflow.set_conditional_entry_point(
     entry_point_router,
     {
         "intent": "intent",
-        "deny_recipe_need": "deny_recipe_need",
-        "confirm_recipe_need": "confirm_recipe_need",
+        "detect_recipe_need": "detect_recipe_need",
     },
 )
 workflow.add_conditional_edges(
     "intent",
     intent_router,
     {"cusine": "cusine", "chitchat": "chitchat"},
+)
+workflow.add_conditional_edges(
+    "detect_recipe_need",
+    recipe_need_router,
+    {
+        "confirm_recipe_need": "confirm_recipe_need",
+        "deny_recipe_need": "deny_recipe_need",
+        "chitchat": "chitchat",
+    },
 )
 workflow.add_edge("chitchat", END)
 workflow.add_conditional_edges("cusine", map_to_intro, ["intro"])

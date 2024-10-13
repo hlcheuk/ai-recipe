@@ -1,7 +1,11 @@
 import random
 from langchain_core.messages import HumanMessage, AIMessage
 
-from src.prompts.prompts import INTENT_PROMPT, CUSINE_PROMPT
+from src.prompts.prompts import (
+    INTENT_PROMPT,
+    CUSINE_PROMPT,
+    DETECT_RECIPE_NEED_PROMPT,
+)
 from src.utils.utils import read_yaml
 
 # Load config from setting.toml
@@ -39,4 +43,13 @@ cusine_examples = [
         ),
     ),
     AIMessage(content=str(cusine_samples)),
+]
+
+detect_recipe_need_examples = [
+    HumanMessage(content="好呀"),
+    AIMessage(content="yes"),
+    HumanMessage(content="唔駛"),
+    AIMessage(content="no"),
+    HumanMessage(content="今日天氣點呀？"),
+    AIMessage(content="others"),
 ]

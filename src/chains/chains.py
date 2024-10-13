@@ -6,6 +6,7 @@ from src.prompts.chat_templates import (
     need_for_recipe_template,
     need_for_other_help_template,
     write_recipe_template,
+    detect_recipe_need_template,
 )
 from src.utils.utils import read_yaml
 from src.helpers.helpers import define_llm
@@ -22,6 +23,7 @@ intro_config = chains_config["intro"]
 need_for_recipe_config = chains_config["need_for_recipe"]
 need_for_other_help_config = chains_config["need_for_other_help"]
 write_recipe_config = chains_config["write_recipe"]
+detect_recipe_need_config = chains_config["detect_recipe_need"]
 
 # Define the LLM for cusine_chain
 intent_llm = define_llm(intent_config)
@@ -31,6 +33,7 @@ intro_llm = define_llm(intro_config)
 need_for_recipe_llm = define_llm(need_for_recipe_config)
 need_for_other_help_llm = define_llm(need_for_other_help_config)
 write_recipe_llm = define_llm(write_recipe_config)
+detect_recipe_need_llm = define_llm(detect_recipe_need_config)
 
 # Define intent chain
 intent_chain = intent_template | intent_llm
@@ -52,3 +55,6 @@ need_for_other_help_chain = need_for_other_help_template | need_for_other_help_l
 
 # Define recipe chain
 write_recipe_chain = write_recipe_template | write_recipe_llm
+
+# Define recipe chain
+detect_recipe_need_chain = detect_recipe_need_template | detect_recipe_need_llm

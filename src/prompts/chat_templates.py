@@ -3,6 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from src.prompts.prompts import (
     INTENT_INSTRUCTION,
     INTENT_PROMPT,
+    CHITCHAT_INSTRUCTION,
     CHITCHAT_PROMPT,
     CUSINE_INSTRUCTION,
     CUSINE_PROMPT,
@@ -14,8 +15,14 @@ from src.prompts.prompts import (
     NEED_FOR_OTHER_HELP_PROMPT,
     WRITE_RECIPE_INSTRUCTION,
     WRITE_RECIPE_PROMPT,
+    DETECT_RECIPE_NEED_INSTRUCTION,
+    DETECT_RECIPE_NEED_PROMPT,
 )
-from src.prompts.few_shots import intent_examples, cusine_examples
+from src.prompts.few_shots import (
+    intent_examples,
+    cusine_examples,
+    detect_recipe_need_examples,
+)
 from src.utils.utils import read_yaml
 
 # Load config from setting.toml
@@ -35,6 +42,7 @@ intent_template = ChatPromptTemplate.from_messages(
 
 chitchat_template = ChatPromptTemplate.from_messages(
     [
+        ("system", CHITCHAT_INSTRUCTION),
         MessagesPlaceholder(variable_name="messages"),
         ("user", CHITCHAT_PROMPT),
     ]
@@ -73,5 +81,14 @@ write_recipe_template = ChatPromptTemplate.from_messages(
     [
         ("system", WRITE_RECIPE_INSTRUCTION),
         ("user", WRITE_RECIPE_PROMPT),
+    ]
+)
+
+detect_recipe_need_template = ChatPromptTemplate.from_messages(
+    [
+        ("system", DETECT_RECIPE_NEED_INSTRUCTION),
+        *detect_recipe_need_examples,
+        # MessagesPlaceholder(variable_name="last_message"),
+        ("user", DETECT_RECIPE_NEED_PROMPT),
     ]
 )
