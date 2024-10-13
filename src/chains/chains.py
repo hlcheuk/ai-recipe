@@ -35,19 +35,11 @@ write_recipe_llm = define_llm(write_recipe_config)
 # Define intent chain
 intent_chain = intent_template | intent_llm
 
-# intent_chain.invoke({"question": "煮乜嘢好?"})
-
 # Define chitchat chain
 chitchat_chain = chitchat_template | chitchat_llm
 
-# chitchat_chain.invoke({"question": "煮乜嘢好?"})
-
 # Define cusine chain
 cusine_chain = cusine_template | cusine_llm
-
-# cusine_chain.invoke({"question": "煮乜嘢好?", "extra_requirements": []})
-# cusine_chain.invoke({"question": "我需要一些煮食想法"})
-# cusine_chain.invoke({"question": "hi"})
 
 # Define intro chain
 intro_chain = intro_template | intro_llm

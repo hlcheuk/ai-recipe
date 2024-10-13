@@ -1,20 +1,18 @@
 from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
 
 from src.model_init.llms import (
-    # llm_llama31,
-    # llm_deepseek_chat,
+    llm_gpt_4o_mini,
+    llm_gpt_4o,
     llm_yi_large,
     llm_yi_large_turbo,
     llm_yi_spark,
-    # llm_gemini_15_pro,
-    # llm_gemini_15_flash,
 )
 from src.utils.utils import read_yaml
 
 # Load config from setting.toml
 setting_config = read_yaml("config/setting.yaml")
 
-# Get model config for Groq models
+# Get model config for Groq modelsW
 chains_config = setting_config["chains"]
 intent_config = chains_config["intent"]
 cusine_config = chains_config["cusine"]
@@ -34,28 +32,22 @@ def define_llm(config: dict):
     Returns:
         LLM: The defined Large Language Model.
     """
-    if config["llm"] == "yi-large":
+    if config["llm"] == "gpt-4o-mini":
+        llm = llm_gpt_4o_mini
+    elif config["llm"] == "gpt-4o":
+        llm = llm_gpt_4o
+    elif config["llm"] == "yi-large":
         llm = llm_yi_large
     elif config["llm"] == "yi-large-turbo":
         llm = llm_yi_large_turbo
     elif config["llm"] == "yi-spark":
         llm = llm_yi_spark
-    # elif config["llm"] == "deepseek-chat":
-    #     llm = llm_deepseek_chat
-    # elif config["llm"] == "llama-3.1-70b":
-    #     llm = llm_llama31
-    # elif config["llm"] == "gemini-1.5-pro":
-    #     llm = llm_gemini_15_pro
-    # elif config["llm"] == "gemini-1.5-flash":
-    #     llm = llm_gemini_15_flash
     llm = llm.with_config(
         configurable={
             "temperature": config["temperature"],
             "top_p": config["top_p"],
         }
     )
-    # llm.temperature = config["temperature"]
-    # llm.top_p = config["top_p"]
     return llm
 
 
