@@ -1,0 +1,66 @@
+# Ignore Git-related files
+.git
+.gitignore
+
+# Ignore local development and environment files
+.env
+*.log
+*.pyc
+__pycache__/
+
+# Ignore node_modules directory (for Node.js projects)
+node_modules/
+
+# Ignore build and distribution directories
+dist/
+build/
+*.egg-info/
+
+# Ignore test and documentation directories
+tests/
+docs/
+visualisation/
+
+# Ignore editor and IDE-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore package manager files
+package-lock.json
+yarn.lock
+pipfile.lock
+
+# Ignore virtual environment directories
+venv/
+.venv/
+env/
+.virtualenv/
+
+# Ignore configuration files that might contain sensitive information
+config.ini
+secrets.yaml
+
+# Ignore backup files
+*.bak
+*.backup
+
+# Ignore large media files
+*.mp4
+*.mov
+*.avi
+
+# Ignore compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore the .gcloudignore file itself
+.gcloudignore
