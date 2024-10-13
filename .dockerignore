@@ -36,7 +36,6 @@ test
 tests
 doc
 docs
-visualisation
 
 # Ignore editor and IDE specific files
 .vscode
