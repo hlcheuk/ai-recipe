@@ -1,6 +1,115 @@
-.git/
-.idea/
-.vscode/
-venv/
-.venv/
+# Ignore version control files
+.git
+.gitignore
+.svn
+.hg
+
+# Ignore Docker-specific files
+Dockerfile
+.dockerignore
+
+# Ignore development and local environment files
 .env
+*.log
+*.pyc
+__pycache__
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ignore dependency directories
+node_modules
+bower_components
+jspm_packages
+**/packages
+vendor
+
+# Ignore build and output directories
+build
+dist
+out
+target
+*.egg-info
+
+# Ignore test and documentation directories
+test
+tests
+doc
+docs
+visualisation
+
+# Ignore editor and IDE specific files
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings
+
+# Ignore package manager files
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# Ignore virtual environment directories
+venv
+.venv
+env
+.virtualenv
+
+# Ignore configuration files that might contain sensitive information
+config.ini
+secrets.yaml
+*.pem
+*.key
+
+# Ignore backup files
+*.bak
+*.backup
+*~
+
+# Ignore large media files
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.flv
+
+# Ignore compiled binaries and libraries
+*.so
+*.dylib
+*.dll
+*.exe
+*.o
+*.a
+
+# Ignore compressed files
+*.zip
+*.rar
+*.7z
+*.gz
+*.tar
+
+# Ignore database files
+*.sqlite
+*.db
+
+# Ignore logs and temporary files
+log
+logs
+tmp
+temp
+
+# Ignore system files that might be created on different OSes
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Ignore files specific to various development tools and frameworks
+.coverage
+.tox
+.pytest_cache
+.mypy_cache
+.eslintcache
+.stylelintcache
