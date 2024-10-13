@@ -10,6 +10,25 @@ llms:
       max_tokens: 4096
       frequency_penalty: 0.1  # not in used
       presence_penalty: 0.1  # not in used
+  azure:
+    gpt-4o-mini:
+      model_name: gpt-4o-mini
+      max_tokens: 4096
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+      azure_openai_api_type: azure
+      azure_openai_api_version: 2024-09-01-preview
+      azure_openai_endpoint: https://hangfat-gpt-dev.openai.azure.com/
+      deployment_name: gpt-4o-mini
+    gpt-4o:
+      model_name: gpt-4o
+      max_tokens: 4096
+      frequency_penalty: 0.1  # not in used
+      presence_penalty: 0.1  # not in used
+      azure_openai_api_type: azure
+      azure_openai_api_version: 2024-09-01-preview
+      azure_openai_endpoint: https://hangfat-gpt-dev.openai.azure.com/
+      deployment_name: gpt-4o
   yi-01:
     yi-large:
       model_name: yi-large-fc
