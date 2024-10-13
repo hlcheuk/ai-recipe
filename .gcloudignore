@@ -19,7 +19,6 @@ build/
 # Ignore test and documentation directories
 tests/
 docs/
-visualisation/
 
 # Ignore editor and IDE-specific files
 .vscode/
