@@ -17,7 +17,7 @@ from src.chains.chains import (
     detect_recipe_need_chain,
     chains_config,
 )
-from src.helpers.helpers import visualise_runnable
+from src.helpers.helpers import visualise_runnable, extract_python_codeblock
 
 # memory = SqliteSaver.from_conn_string(":memory:")
 memory = MemorySaver()
@@ -33,7 +33,7 @@ def intent(state: OverallState):
     messages = state["messages"]
     question = messages[-1].content
     response = intent_chain.invoke({"question": question})
-    result = eval(response.content)
+    result = eval(extract_python_codeblock(response.content)[0])
     return {
         "question": question,
         "about_cusine": result["about_cusine"],
@@ -63,7 +63,7 @@ def cusine(state: OverallState):
     )
     return {
         "question": question,
-        "cusine_choices": eval(response.content),
+        "cusine_choices": eval(extract_python_codeblock(response.content)[0]),
     }
 
 

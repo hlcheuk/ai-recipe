@@ -1,11 +1,15 @@
+from typing import List
+import re
+
 from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
 
 from src.model_init.llms import (
-    llm_gpt_4o_mini,
-    llm_gpt_4o,
+    # llm_gpt_4o_mini,
+    # llm_gpt_4o,
     llm_yi_large,
     llm_yi_large_turbo,
     llm_yi_spark,
+    llm_yi_lightning,
 )
 from src.utils.utils import read_yaml
 
@@ -32,16 +36,18 @@ def define_llm(config: dict):
     Returns:
         LLM: The defined Large Language Model.
     """
-    if config["llm"] == "gpt-4o-mini":
-        llm = llm_gpt_4o_mini
-    elif config["llm"] == "gpt-4o":
-        llm = llm_gpt_4o
-    elif config["llm"] == "yi-large":
+    # if config["llm"] == "gpt-4o-mini":
+    #     llm = llm_gpt_4o_mini
+    # elif config["llm"] == "gpt-4o":
+    #     llm = llm_gpt_4o
+    if config["llm"] == "yi-large":
         llm = llm_yi_large
     elif config["llm"] == "yi-large-turbo":
         llm = llm_yi_large_turbo
     elif config["llm"] == "yi-spark":
         llm = llm_yi_spark
+    elif config["llm"] == "yi-lightning":
+        llm = llm_yi_lightning
     llm = llm.with_config(
         configurable={
             "temperature": config["temperature"],
@@ -68,6 +74,20 @@ def visualise_runnable(runnable):
     )
 
 
+def extract_python_codeblock(output: str) -> List[str]:
+    """
+    Extracts all Python code blocks from the given string.
+
+    Args:
+        output (str): The string to extract Python code blocks from.
+
+    Returns:
+        List[str]: A list of strings, each containing a Python code block.
+    """
+    return re.findall(r"```python\n(.*)\n```", output, re.DOTALL)
+
+
 if __name__ == "__main__":
     define_llm()
     visualise_runnable()
+    extract_python_codeblock()

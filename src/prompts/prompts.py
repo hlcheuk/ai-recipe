@@ -1,5 +1,6 @@
 INTENT_INSTRUCTION = """你十分擅長根據用戶的問題來判斷其意圖。
 此外，你的回應永遠都需要以一個Python dictionary的形式呈現。
+請把Python dictionary放置在一個python程式碼片段之內。
 """
 
 
@@ -26,6 +27,7 @@ CUSINE_INSTRUCTION = """你是一位資深的廚師，精通世界各地的菜�
 因為你的服務對象是一個普通的香港家庭，所以你提供的菜式必須要大眾化，切勿過於複雜。
 此外，你絕對不能提供無需烹調的菜式，例如刺身、生魚片和壽司。
 請用香港粵語回答。並以一個Python list的形式回傳菜式名稱。
+請把Python list放置在一個python程式碼片段之內。
 """
 
 CUSINE_PROMPT = """根據客人的要求，提供最多{no_of_cusine}款菜式名稱。請勿提供與客人要求無關的菜式。
@@ -109,4 +111,4 @@ DETECT_RECIPE_NEED_PROMPT = """你剛才已向客人詢問是否需要為他準�
 請理解客人的回答，並判斷客人是否需要你為他準備食譜。
 """
 
-BEGINNING_CANNED_RESPONSE = "你好呀！想食啲咩菜式咁呢？"
+BEGINNING_CANNED_RESPONSE = "你好呀！想食啲咩菜式咁呢？例如日本菜或者法國菜呀咁？"
